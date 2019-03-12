@@ -1,0 +1,4 @@
+requests
+ptvsd
+boto3
+botocore
