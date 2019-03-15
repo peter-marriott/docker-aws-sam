@@ -18,8 +18,7 @@
 | Python libraries      | use `pip install` requirements scripts    |
 |                       | Windows Powershell `requirements.ps1`     |
 
-Install python virtual env.
-If required add an alias to powershell profile so it is easy to switch to it. Warning this means changing powershell execution policy as admin user.
+Install python virtual env. When using this in Powershell to run the _Activate_ script the powershell execution policy has to be changed to allow non signed scripts to be run.
 
 ```powershell
 cd ~
@@ -31,6 +30,14 @@ Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 # Optional add alias to profile
 Add-Content $PROFILE "`nNew-Item -Path Alias:docker_aws_sam -Value ~\envs\docker_aws_sam\Scripts\Activate.ps1"
 ```
+
+```json
+{
+    "pythonTestExplorer.testFramework": "pytest",
+    "pythonTestExplorer.testFramework": "unittest",
+    "python.unitTest.unittestArgs": ["-s", "tests"],
+    "python.pythonPath": "C:\\Users\\Peter\\envs\\docker_aws_sam\\Scripts\\python.exe"
+}
 
 
 ### Docker set-up
