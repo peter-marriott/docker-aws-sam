@@ -12,15 +12,15 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python: Remote Attach",
+            "name": "Function to call docker",
             "type": "python",
             "request": "attach",
-            "port": 5678,
+            "port": 5890,
             "host": "localhost",
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}",
-                    "remoteRoot": "."
+                    "localRoot": "${workspaceFolder}/sam/function_to_call_docker",
+                    "remoteRoot": "/var/task"
                 }
             ]
         },
@@ -30,19 +30,6 @@
             "request": "launch",
             "module": "enter-your-module-name-here",
             "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: Django",
-            "type": "python",
-            "request": "launch",
-            "program": "${workspaceFolder}/manage.py",
-            "console": "integratedTerminal",
-            "args": [
-                "runserver",
-                "--noreload",
-                "--nothreading"
-            ],
-            "django": true
         },
         {
             "name": "Python: Flask",
