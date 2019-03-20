@@ -1,24 +1,37 @@
 # Docker and AWS SAM
 
+Purpose of this project is to demonstrate using docker and AWS SAM together.
+
+The scenarios the project demonstrates are:
+
+- Docker web api calling a Lambda function via http api.
+- Docker web api calling a Lambda function directly.
+- Lambda function via http api calling a docker web api that accesses PostgreSQL DB.
+- Lambda function via http api calling Lambda function directly.
+- Lambda function via http api accessing DynamoDB locally.
+- Lambda function via http api accessing Redis locally.
+- Lambda function called by SNS event.
+- Debugging Lambda function.
+- Local change.
+
 ## Prerequisites
 
-| Prerequisites | Method |
-|--------|---------|
-| Python 3.6            | Windows msi from [https://www.python.org/downloads/](https://www.python.org/downloads/) |
-| docker | `Docker version 18.09.2, build 6247962` |
-| aws cli | `aws-cli/1.16.119 Python/3.6.0 Windows/10 botocore/1.12.109` |
-| SAM cli | `SAM CLI, version 0.11.0`|
+All paths used in this file are relative to this read me.
 
+### Windows set-up
 
-### Python Prerequisites
+Windows set-up done from msi installers.
 
-| Prerequisites | Method |
-|--------|---------|
-| Python 3.6            | Windows msi from [https://www.python.org/downloads/](https://www.python.org/downloads/) |
-| Python libraries      | use `pip install` requirements scripts    |
-|                       | Windows Powershell `requirements.ps1`     |
+Beware of firewall issues. With access on port 443 and file sharing with Docker.
 
-Install python virtual env. When using this in Powershell to run the _Activate_ script the powershell execution policy has to be changed to allow non signed scripts to be run.
+| Prerequisites | Method
+|--------|---------
+| Python 3.6 | Windows msi from [https://www.python.org/downloads/](https://www.python.org/downloads/)
+| docker | `Docker version 18.09.2, build 6247962`
+| aws cli | `aws-cli/1.16.119 Python/3.6.0 Windows/10 botocore/1.12.109`
+| SAM cli | `SAM CLI, version 0.11.0`
+
+Install a python virtual environment to allow editing and linting tools to use only those libraries required by the project. When using this in Powershell to run the _Activate_ script the powershell execution policy has to be changed to allow non signed scripts to be run.
 
 ```powershell
 cd ~
@@ -31,26 +44,34 @@ Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 Add-Content $PROFILE "`nNew-Item -Path Alias:docker_aws_sam -Value ~\envs\docker_aws_sam\Scripts\Activate.ps1"
 ```
 
+After virtual environment has been activated use pip to install python requirements. `pip install -r .\requirements.txt`
+
+#### VS Code
+
+settings.json changes for using `unittest`
+
 ```json
 {
-    "pythonTestExplorer.testFramework": "pytest",
     "pythonTestExplorer.testFramework": "unittest",
     "python.unitTest.unittestArgs": ["-s", "tests"],
-    "python.pythonPath": "C:\\Users\\Peter\\envs\\docker_aws_sam\\Scripts\\python.exe"
 }
+```
 
+## Build and test
 
-### Docker set-up
+Start four Powershell windows: docker, SAM api gateway, SAM lambda and one for running cli commands and curl requests.
+
+The Dynamodb container command line parameters have been changed to `-sharedDb` so 'DynamoDB uses a single database file instead of separate files for each credential and Region'. This avoids an issue if the aws context is different for the `sam local start-api --host 0.0.0.0` and the aws cli DynamoDB set-up.
 
 # Run Docker app
 
 Build and test it works
 
-```bash
-cd app1
-docker build -t app1 .
-docker run -p 5000:5000/tcp - app1 # returns <container_id>
-docker logs -ft <container_id> # Tail logs
+```powershell
+cd .\docker
+docker-compose build # Build containers
+docker-compose up -d # Start containers
+docker-compose logs -tf # View output
 ```
 
 ```bash
@@ -87,22 +108,26 @@ I am planning to do this work on Windows and Linux to see if there are any diffe
 |docker | `Docker version 18.09.2, build 6247962` |
 | aws cli | `aws-cli/1.16.119 Python/3.6.0 Windows/10 botocore/1.12.109` |
 | SAM cli | `SAM CLI, version 0.11.0`|
-|Optional | |
-| WSL | `Linux Z2 4.4.0-17763-Microsoft #253-Microsoft Mon Dec 31 17:49:00 PST 2018 x86_64 x86_64 x86_64 GNU/Linux`
-| Docker client | `Docker version 18.06.3-ce, build d7080c1` |
-| Docker compose | `docker-compose version 1.23.2, build 1110ad01` |
 
-#### WSL docker client installation
 
-```bash
-wget https://download.docker.com/linux/static/stable/x86_64/docker-18.06.3-ce.tgz
-tar -xzvf docker-18.06.3-ce.tgz
-sudo cp docker/docker /usr/local/bin/
-sudo chmod +x /usr/local/bin/docker
-sudo curl -L https://github.com/docker/compose/releases/download/1.23.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+# Run Sam app
+
+Build and test it works
+
+```Powershell
+cd sam-api
+sam build --use-container # This takes a while downloading container first time
+sam local start-api --host 0.0.0.0 # Allow requests from non localhost
 ```
 
-Set docker daemon
+```Powershell
+cd sam-function
+sam build --use-container # This takes a while downloading container first time
+sam local start-lambda --host 0.0.0.0
+```
 
-![Docker Daemon setting](/images/DockerDaemonSetting.png)
+```
+curl -L http://127.0.0.1:3000/hello1
+curl -L http://127.0.0.1:3000/hello2
+curl -L http://127.0.0.1:3000/hello3
+```
