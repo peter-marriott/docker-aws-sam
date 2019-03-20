@@ -33,7 +33,7 @@ def lambda_handler(event, context):
     content['body'] = -1
     try:
         ip = requests.get("http://checkip.amazonaws.com/")
-        docker_get = requests.get("http://z2:5000/3")
+        docker_get = requests.get("http://host.docker.internal:5000/3")
         content = docker_get.json()
         print(content['body'])
     except requests.RequestException as e:

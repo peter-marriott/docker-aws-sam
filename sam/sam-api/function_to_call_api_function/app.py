@@ -6,7 +6,7 @@ def lambda_handler(event, context):
     content = {}
     content['body'] = -1
     try:
-        sam_get = requests.get("http://z2:3000/hello1")
+        sam_get = requests.get("http://host.docker.internal:3000/hello1")
         content = sam_get.json()
         print(content['body'])
     except requests.RequestException as e:
