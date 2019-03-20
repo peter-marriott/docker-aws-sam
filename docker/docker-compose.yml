@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  function_target:
+    build: lambda_target/.
+    ports:
+     - "5000:5000"
+  function_user:
+    build: call_lambda/.
+    ports:
+     - "5001:5000"
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: redis-commander
+    hostname: redis-commander
+    restart: always
+    environment:
+    - REDIS_HOSTS=local:redis:6379
+    ports:
+    - "8081:8081"
+  dynamodb:
+    image: amazon/dynamodb-local
+    command: "-jar DynamoDBLocal.jar -sharedDb -inMemory"
+    ports:
+      - '8000:8000'
+  postgres:
+    build: postgres/.
+    ports:
+     - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: my_secret
+      DATA: 1
+    networks:
+      default:
+        aliases:
+          - postgres_db
