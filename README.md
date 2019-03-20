@@ -107,6 +107,15 @@ sam local invoke --no-event CallByFunction # By Sam
 sam local generate-event sns notification --message "Hello SNS" | sam local invoke CallBySNS
 ```
 
+### Debugging
+
+```powershell
+cd .\sam\sam-api
+sam build --use-container # This takes a while downloading container first time, need interest access to download Python libraries
+sam local start-api --host 0.0.0.0 -d 5890 # open port
+curl http://127.0.0.1:3000/call_debug
+```
+
 ### Docker: Change code in container `function_user`
 
 - Edit function_target and save
@@ -118,44 +127,9 @@ Or do it all in one go
 
 - `docker-compose stop function_user;docker-compose build function_user;docker-compose up -d --no-deps function_user`
 
-
 ## Networking
 
 To allow lambda running locally, in a docker container, and other docker containers to reference each other a hostname is required. Using docker version `18.03` under Windows and MacOS you can use `host.docker.internal`.
 For Linux either you may use [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) or a side car docker container such as [https://github.com/qoomon/docker-host](https://github.com/qoomon/docker-host).
 Otherwise adjust your host file to have a hostname in it with the machine's ip address.
 
-## Set-up
-
-I am planning to do this work on Windows and Linux to see if there are any differences in behaviour. Starting with windows first.
-
-### Windows set-up
-
-| Installed | Version
-|-|-|
-|docker | `Docker version 18.09.2, build 6247962` |
-| aws cli | `aws-cli/1.16.119 Python/3.6.0 Windows/10 botocore/1.12.109` |
-| SAM cli | `SAM CLI, version 0.11.0`|
-
-
-# Run Sam app
-
-Build and test it works
-
-```Powershell
-cd sam-api
-sam build --use-container # This takes a while downloading container first time
-sam local start-api --host 0.0.0.0 # Allow requests from non localhost
-```
-
-```Powershell
-cd sam-function
-sam build --use-container # This takes a while downloading container first time
-sam local start-lambda --host 0.0.0.0
-```
-
-```
-curl -L http://127.0.0.1:3000/hello1
-curl -L http://127.0.0.1:3000/hello2
-curl -L http://127.0.0.1:3000/hello3
-```
