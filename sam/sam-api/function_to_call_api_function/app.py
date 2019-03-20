@@ -2,13 +2,10 @@ import json
 import requests
 
 def lambda_handler(event, context):
-    print("Hello2")
-    content = {}
-    content['body'] = -1
     try:
-        sam_get = requests.get("http://host.docker.internal:3000/hello1")
+        sam_get = requests.get("http://host.docker.internal:3000/api_function")
         content = sam_get.json()
-        print(content['body'])
+        print(content['message'])
     except requests.RequestException as e:
         # Send some context about this error to Lambda Logs
         print(e)
@@ -18,7 +15,7 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world 2",
-            "body": content['body']
+            "message": "API called",
+            "body": content['message']
         }),
     }

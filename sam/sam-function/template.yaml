@@ -8,15 +8,13 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
-        Timeout: 3
-
+        Timeout: 10
 
 Resources:
-
-    HelloWorldFunction:
+    CallByFunction:
         Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
         Properties:
-            CodeUri: hello_function/
+            CodeUri: call_by_function/
             Handler: app.lambda_handler
             Runtime: python3.6
             Events:
@@ -25,20 +23,35 @@ Resources:
                     Properties:
                         Path: /hello
                         Method: get
+    CallBySNS:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: call_by_sns/
+            Handler: app.lambda_handler
+            Runtime: python3.6
+            Events:
+                CallTopic:
+                    Type: SNS
+                    Properties:
+                        Topic: !Ref DummySNSTopic
+    DummySNSTopic:
+        Type: 'AWS::SNS::Topic'
+        Properties:
+            DisplayName: MySNSTopic
 
 Outputs:
 
     # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
     # Find out more about other implicit resources you can reference within SAM
     # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-    HelloWorldApi:
+    CallByFunctionApi:
       Description: "API Gateway endpoint URL for Prod stage for Hello World function"
       Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
 
-    HelloWorldFunction:
+    CallByFunctionFunction:
       Description: "Hello World Lambda Function ARN"
-      Value: !GetAtt HelloWorldFunction.Arn
+      Value: !GetAtt CallByFunctionFunction.Arn
 
-    HelloWorldFunctionIamRole:
+    CallByFunctionFunctionIamRole:
       Description: "Implicit IAM Role created for Hello World function"
-      Value: !GetAtt HelloWorldFunctionRole.Arn
+      Value: !GetAtt CallByFunctionFunctionRole.Arn

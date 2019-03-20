@@ -1,5 +1,9 @@
-import json
+from os import getenv
 from flask import Flask
+import boto3
+import botocore
+import json
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -14,7 +18,7 @@ def call_lambda():
                                   config=botocore.client.Config(signature_version=botocore.UNSIGNED,
                                                 read_timeout=10,
                                                 retries={'max_attempts': 0}))
-        response = lambda_client.invoke(FunctionName="HelloFunction")
+        response = lambda_client.invoke(FunctionName="CallByFunction")
         lambda_response_body = response['Payload'].read()
         data = json.loads(lambda_response_body)['body']
     except Exception as e:

@@ -22,7 +22,7 @@ def lambda_handler(event, context):
         else:
             lambda_client = boto3.client('lambda')
 
-        response = lambda_client.invoke(FunctionName="HelloWorldFunction")
+        response = lambda_client.invoke(FunctionName="CallByFunction")
         lambda_response_body = response['Payload'].read()
         data = json.loads(lambda_response_body)['body']
     except Exception as e:
