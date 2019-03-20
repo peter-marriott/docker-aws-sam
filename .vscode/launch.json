@@ -12,14 +12,14 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Function to call docker",
+            "name": "SAM CLI Debug",
             "type": "python",
             "request": "attach",
             "port": 5890,
             "host": "localhost",
             "pathMappings": [
                 {
-                    "localRoot": "${workspaceFolder}/sam/function_to_call_docker",
+                    "localRoot": "${workspaceFolder}/sam/sam-api/function_to_debug",
                     "remoteRoot": "/var/task"
                 }
             ]
