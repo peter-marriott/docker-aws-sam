@@ -42,6 +42,8 @@ Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 ~\envs\docker_aws_sam\Scripts\Activate.ps1
 # Optional add alias to profile
 Add-Content $PROFILE "`nNew-Item -Path Alias:docker_aws_sam -Value ~\envs\docker_aws_sam\Scripts\Activate.ps1"
+cd <workspace>
+pip install -r .\requirements.txt
 ```
 
 After virtual environment has been activated use pip to install python requirements. `pip install -r .\requirements.txt`
@@ -73,7 +75,7 @@ Shell 1
 cd .\docker
 docker-compose build # Build containers
 docker-compose up -d # Start containers
-docker-compose logs -tf # View output
+docker-compose logs -tf --tail=10 # View output
 ```
 
 Shell 2
@@ -132,4 +134,3 @@ Or do it all in one go
 To allow lambda running locally, in a docker container, and other docker containers to reference each other a hostname is required. Using docker version `18.03` under Windows and MacOS you can use `host.docker.internal`.
 For Linux either you may use [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) or a side car docker container such as [https://github.com/qoomon/docker-host](https://github.com/qoomon/docker-host).
 Otherwise adjust your host file to have a hostname in it with the machine's ip address.
-
