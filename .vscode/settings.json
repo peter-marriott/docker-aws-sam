@@ -1,4 +1,7 @@
 {
-    "pythonTestExplorer.testFramework": "pytest",
-    "python.pythonPath": "C:\\Users\\Peter\\envs\\docker_aws_sam\\Scripts\\python.exe"
+    "pythonTestExplorer.testFramework": "unittest",
+    "python.testing.unittestArgs": [
+        "-s",
+        "tests"
+    ]
 }
